@@ -551,10 +551,11 @@ if(NOT cadical)
         SOURCE_DIR ${CMAKE_BINARY_DIR}/cadical
         BINARY_DIR ${CMAKE_BINARY_DIR}/cadical/build
         CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/cadical/configure
-        BUILD_COMMAND make
+        BUILD_COMMAND $(MAKE)
         INSTALL_COMMAND ""
         TEST_COMMAND "")
     set(CADICAL_LIB ${CMAKE_BINARY_DIR}/cadical/build/libcadical.a)
+    set(cadical ${CADICAL_LIB})
 endif()
 
 
@@ -567,33 +568,27 @@ find_library(cadiback
           ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback/build
           NO_DEFAULT_PATH)
 if(NOT cadiback)
-    execute_process(COMMAND git clone --branch mate https://github.com/meelgroup/cadiback
+    #execute_process(COMMAND git clone --branch mate https://github.com/meelgroup/cadiback
+    #                WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    execute_process(COMMAND git clone --branch mate https://github.com/j-danner/cadiback.git #uses fix for compilation with $CXX containing '/'
                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
     ExternalProject_Add(cadiback
         SOURCE_DIR ${CMAKE_BINARY_DIR}/cadiback
         BINARY_DIR ${CMAKE_BINARY_DIR}/cadiback/build
-        DEPENDS cadical # Ensure cadical is built first
-        CONFIGURE_COMMAND bash -c "cd ${CMAKE_BINARY_DIR}/cadiback && ./configure"
-        BUILD_COMMAND bash -c "cd ${CMAKE_BINARY_DIR}/cadiback && make"
+        DEPENDS cadical
+        CONFIGURE_COMMAND cd ${CMAKE_BINARY_DIR}/cadiback && ./configure
+        BUILD_COMMAND cd ${CMAKE_BINARY_DIR}/cadiback && $(MAKE)
         INSTALL_COMMAND ""
         TEST_COMMAND "")
     set(CADIBACK_LIB ${CMAKE_BINARY_DIR}/cadiback/libcadiback.a)
-endif()
-
-# Add the libraries to the target
-if(cadical)
-    message(STATUS "Using existing cadical: ${cadical}")
-else()
-    message(STATUS "Building cadical: ${CADICAL_LIB}")
-    set(cadical ${CADICAL_LIB})
-endif()
-
-if(cadiback)
-    message(STATUS "Using existing cadiback: ${cadiback}")
-else()
-    message(STATUS "Building cadiback: ${CADIBACK_LIB}")
     set(cadiback ${CADIBACK_LIB})
 endif()
+
+# Add include directories for cadical and cadiback headers
+include_directories(
+    ${TOP_LEVEL_DIR}/cadical/src   # Include cadical headers
+    ${TOP_LEVEL_DIR}/cadiback      # Include cadiback headers
+)
 
 
 include(CheckFloatPrecision)
