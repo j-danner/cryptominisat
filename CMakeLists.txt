@@ -534,14 +534,66 @@ if (NOT NOZLIB AND NOT ((NOT BUILD_SHARED_LIBS) AND WIN32))
 endif()
 
 
-find_library(cadiback
-    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback/
-    NAMES cadiback
-    REQUIRED)
+include(ExternalProject)
+
+# Build cadical
 find_library(cadical
-    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../cadical/build/
     NAMES cadical
-    REQUIRED)
+    PATHS ${CMAKE_BINARY_DIR}/cadical/build
+          ${CMAKE_BINARY_DIR}/cadical
+          ${CMAKE_CURRENT_SOURCE_DIR}/../cadical/build
+          ${CMAKE_CURRENT_SOURCE_DIR}/../cadical
+          NO_DEFAULT_PATH)
+if(NOT cadical)
+    execute_process(COMMAND git clone --branch mate-only-libraries-1.8.0 https://github.com/meelgroup/cadical
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    ExternalProject_Add(cadical
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/cadical
+        BINARY_DIR ${CMAKE_BINARY_DIR}/cadical/build
+        CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/cadical/configure
+        BUILD_COMMAND make
+        INSTALL_COMMAND ""
+        TEST_COMMAND "")
+    set(CADICAL_LIB ${CMAKE_BINARY_DIR}/cadical/build/libcadical.a)
+endif()
+
+
+# Build cadiback
+find_library(cadiback
+    NAMES cadiback
+    PATHS ${CMAKE_BINARY_DIR}/cadiback
+          ${CMAKE_BINARY_DIR}/cadiback/build
+          ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback
+          ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback/build
+          NO_DEFAULT_PATH)
+if(NOT cadiback)
+    execute_process(COMMAND git clone --branch mate https://github.com/meelgroup/cadiback
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    ExternalProject_Add(cadiback
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/cadiback
+        BINARY_DIR ${CMAKE_BINARY_DIR}/cadiback/build
+        DEPENDS cadical # Ensure cadical is built first
+        CONFIGURE_COMMAND bash -c "cd ${CMAKE_BINARY_DIR}/cadiback && ./configure"
+        BUILD_COMMAND bash -c "cd ${CMAKE_BINARY_DIR}/cadiback && make"
+        INSTALL_COMMAND ""
+        TEST_COMMAND "")
+    set(CADIBACK_LIB ${CMAKE_BINARY_DIR}/cadiback/libcadiback.a)
+endif()
+
+# Add the libraries to the target
+if(cadical)
+    message(STATUS "Using existing cadical: ${cadical}")
+else()
+    message(STATUS "Building cadical: ${CADICAL_LIB}")
+    set(cadical ${CADICAL_LIB})
+endif()
+
+if(cadiback)
+    message(STATUS "Using existing cadiback: ${cadiback}")
+else()
+    message(STATUS "Building cadiback: ${CADIBACK_LIB}")
+    set(cadiback ${CADIBACK_LIB})
+endif()
 
 
 include(CheckFloatPrecision)

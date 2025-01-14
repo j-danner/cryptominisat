@@ -354,6 +354,7 @@ install(TARGETS cryptominisat5
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cryptominisat5"
 )
+add_dependencies(cryptominisat5 cadiback)
 
 add_executable(cryptominisat5-bin
     main.cpp
