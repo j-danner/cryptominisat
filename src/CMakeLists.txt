@@ -273,8 +273,8 @@ target_link_libraries(cryptominisat5
     LINK_PUBLIC ${LOUVAIN_COMMUNITIES_LIBRARIES}
     LINK_PUBLIC ${CMAKE_THREAD_LIBS_INIT}
     LINK_PUBLIC ${GMP_LIBRARIES}
-    LINK_PUBLIC ${cadiback}
-    LINK_PUBLIC ${cadical}
+    #LINK_PUBLIC ${cadiback}
+    #LINK_PUBLIC ${cadical}
 )
 
 if (NOT WIN32)
@@ -354,7 +354,7 @@ install(TARGETS cryptominisat5
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
     PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cryptominisat5"
 )
-add_dependencies(cryptominisat5 cadiback)
+#add_dependencies(cryptominisat5 cadiback)
 
 add_executable(cryptominisat5-bin
     main.cpp

@@ -534,61 +534,61 @@ if (NOT NOZLIB AND NOT ((NOT BUILD_SHARED_LIBS) AND WIN32))
 endif()
 
 
-include(ExternalProject)
-
-# Build cadical
-find_library(cadical
-    NAMES cadical
-    PATHS ${CMAKE_BINARY_DIR}/cadical/build
-          ${CMAKE_BINARY_DIR}/cadical
-          ${CMAKE_CURRENT_SOURCE_DIR}/../cadical/build
-          ${CMAKE_CURRENT_SOURCE_DIR}/../cadical
-          NO_DEFAULT_PATH)
-if(NOT cadical)
-    execute_process(COMMAND git clone --branch mate-only-libraries-1.8.0 https://github.com/meelgroup/cadical
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    ExternalProject_Add(cadical
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/cadical
-        BINARY_DIR ${CMAKE_BINARY_DIR}/cadical/build
-        CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/cadical/configure
-        BUILD_COMMAND $(MAKE)
-        INSTALL_COMMAND ""
-        TEST_COMMAND "")
-    set(CADICAL_LIB ${CMAKE_BINARY_DIR}/cadical/build/libcadical.a)
-    set(cadical ${CADICAL_LIB})
-endif()
-
-
-# Build cadiback
-find_library(cadiback
-    NAMES cadiback
-    PATHS ${CMAKE_BINARY_DIR}/cadiback
-          ${CMAKE_BINARY_DIR}/cadiback/build
-          ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback
-          ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback/build
-          NO_DEFAULT_PATH)
-if(NOT cadiback)
-    #execute_process(COMMAND git clone --branch mate https://github.com/meelgroup/cadiback
-    #                WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    execute_process(COMMAND git clone --branch mate https://github.com/j-danner/cadiback.git #uses fix for compilation with $CXX containing '/'
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    ExternalProject_Add(cadiback
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/cadiback
-        BINARY_DIR ${CMAKE_BINARY_DIR}/cadiback/build
-        DEPENDS cadical
-        CONFIGURE_COMMAND cd ${CMAKE_BINARY_DIR}/cadiback && ./configure
-        BUILD_COMMAND cd ${CMAKE_BINARY_DIR}/cadiback && $(MAKE)
-        INSTALL_COMMAND ""
-        TEST_COMMAND "")
-    set(CADIBACK_LIB ${CMAKE_BINARY_DIR}/cadiback/libcadiback.a)
-    set(cadiback ${CADIBACK_LIB})
-endif()
-
-# Add include directories for cadical and cadiback headers
-include_directories(
-    ${TOP_LEVEL_DIR}/cadical/src   # Include cadical headers
-    ${TOP_LEVEL_DIR}/cadiback      # Include cadiback headers
-)
+#include(ExternalProject)
+#
+## Build cadical
+#find_library(cadical
+#    NAMES cadical
+#    PATHS ${CMAKE_BINARY_DIR}/cadical/build
+#          ${CMAKE_BINARY_DIR}/cadical
+#          ${CMAKE_CURRENT_SOURCE_DIR}/../cadical/build
+#          ${CMAKE_CURRENT_SOURCE_DIR}/../cadical
+#          NO_DEFAULT_PATH)
+#if(NOT cadical)
+#    execute_process(COMMAND git clone --branch mate-only-libraries-1.8.0 https://github.com/meelgroup/cadical
+#                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+#    ExternalProject_Add(cadical
+#        SOURCE_DIR ${CMAKE_BINARY_DIR}/cadical
+#        BINARY_DIR ${CMAKE_BINARY_DIR}/cadical/build
+#        CONFIGURE_COMMAND ${CMAKE_BINARY_DIR}/cadical/configure
+#        BUILD_COMMAND $(MAKE)
+#        INSTALL_COMMAND ""
+#        TEST_COMMAND "")
+#    set(CADICAL_LIB ${CMAKE_BINARY_DIR}/cadical/build/libcadical.a)
+#    set(cadical ${CADICAL_LIB})
+#endif()
+#
+#
+## Build cadiback
+#find_library(cadiback
+#    NAMES cadiback
+#    PATHS ${CMAKE_BINARY_DIR}/cadiback
+#          ${CMAKE_BINARY_DIR}/cadiback/build
+#          ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback
+#          ${CMAKE_CURRENT_SOURCE_DIR}/../cadiback/build
+#          NO_DEFAULT_PATH)
+#if(NOT cadiback)
+#    #execute_process(COMMAND git clone --branch mate https://github.com/meelgroup/cadiback
+#    #                WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+#    execute_process(COMMAND git clone --branch mate https://github.com/j-danner/cadiback.git #uses fix for compilation with $CXX containing '/'
+#                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+#    ExternalProject_Add(cadiback
+#        SOURCE_DIR ${CMAKE_BINARY_DIR}/cadiback
+#        BINARY_DIR ${CMAKE_BINARY_DIR}/cadiback/build
+#        DEPENDS cadical
+#        CONFIGURE_COMMAND cd ${CMAKE_BINARY_DIR}/cadiback && ./configure
+#        BUILD_COMMAND cd ${CMAKE_BINARY_DIR}/cadiback && $(MAKE)
+#        INSTALL_COMMAND ""
+#        TEST_COMMAND "")
+#    set(CADIBACK_LIB ${CMAKE_BINARY_DIR}/cadiback/libcadiback.a)
+#    set(cadiback ${CADIBACK_LIB})
+#endif()
+#
+## Add include directories for cadical and cadiback headers
+#include_directories(
+#    ${TOP_LEVEL_DIR}/cadical/src   # Include cadical headers
+#    ${TOP_LEVEL_DIR}/cadiback      # Include cadiback headers
+#)
 
 
 include(CheckFloatPrecision)

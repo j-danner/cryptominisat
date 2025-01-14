@@ -1781,14 +1781,14 @@ lbool Solver::execute_inprocess_strategy(
         } else if (token == "oracle-vivif") {
             bool finished = false;
             if (nVars() > 10) oracle_vivif(finished);
-        } else if (token == "oracle-sparsify") {
-            bool finished = false;
-            backbone_simpl(30LL*1000LL, finished);
-            if (nVars() > 10) { if (finished) oracle_sparsify();
-            }
-        } else if (token == "backbone") {
-            bool finished = false;
-            backbone_simpl(30LL*1000LL, finished);
+        //} else if (token == "oracle-sparsify") {
+        //    bool finished = false;
+        //    backbone_simpl(30LL*1000LL, finished);
+        //    if (nVars() > 10) { if (finished) oracle_sparsify();
+        //    }
+        //} else if (token == "backbone") {
+        //    bool finished = false;
+        //    backbone_simpl(30LL*1000LL, finished);
         } else if (token == "must-scc-vrepl") {
             if (conf.doFindAndReplaceEqLits) {
                 varReplacer->replace_if_enough_is_found();

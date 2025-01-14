@@ -21,55 +21,57 @@ THE SOFTWARE.
 ***********************************************/
 
 #include "solver.h"
-#ifdef INSTALLED_CADIBACK
-#include <cadiback.h>
-#else
-#include "../cadiback/cadiback.h"
-#endif
+//#ifdef INSTALLED_CADIBACK
+//#include <cadiback.h>
+//#else
+//#include "../cadiback/cadiback.h"
+//#endif
 
 using namespace CMSat;
 
-bool Solver::backbone_simpl(int64_t orig_max_confl, bool& finished)
-{
-    vector<int> cnf;
-    /* for(uint32_t i = 0; i < nVars(); i++) picosat_inc_max_var(picosat); */
-
-    for(auto const& off: longIrredCls) {
-        Clause* cl = cl_alloc.ptr(off);
-        for(auto const& l1: *cl) {
-            cnf.push_back(PICOLIT(l1));
-        }
-        cnf.push_back(0);
-    }
-    for(uint32_t i = 0; i < nVars()*2; i++) {
-        Lit l1 = Lit::toLit(i);
-        for(auto const& w: watches[l1]) {
-            if (!w.isBin() || w.red()) continue;
-            const Lit l2 = w.lit2();
-            if (l1 > l2) continue;
-
-            cnf.push_back(PICOLIT(l1));
-            cnf.push_back(PICOLIT(l2));
-            cnf.push_back(0);
-        }
-    }
-    vector<int> ret;
-    int sat = CadiBack::doit(cnf, conf.verbosity, ret);
-    if (sat) {
-        vector<Lit> tmp;
-        for(const auto& l: ret) {
-            if (l == 0) continue;
-            const Lit lit = Lit(abs(l)-1, l < 0);
-            if (value(lit.var()) != l_Undef) continue;
-            if (varData[lit.var()].removed != Removed::none) continue;
-            tmp.clear();
-            tmp.push_back(lit);
-            add_clause_int(tmp);
-        }
-        finished = true;
-    }
-    return sat != 20;
-}
+//bool Solver::backbone_simpl(int64_t orig_max_confl, bool& finished)
+//{
+//    vector<int> cnf;
+//    /* for(uint32_t i = 0; i < nVars(); i++) picosat_inc_max_var(picosat); */
+//
+//    for(auto const& off: longIrredCls) {
+//        Clause* cl = cl_alloc.ptr(off);
+//        for(auto const& l1: *cl) {
+//            cnf.push_back(PICOLIT(l1));
+//        }
+//        cnf.push_back(0);
+//    }
+//    for(uint32_t i = 0; i < nVars()*2; i++) {
+//        Lit l1 = Lit::toLit(i);
+//        for(auto const& w: watches[l1]) {
+//            if (!w.isBin() || w.red()) continue;
+//            const Lit l2 = w.lit2();
+//            if (l1 > l2) continue;
+//
+//            cnf.push_back(PICOLIT(l1));
+//            cnf.push_back(PICOLIT(l2));
+//            cnf.push_back(0);
+//        }
+//    }
+//    vector<int> ret;
+//    //int sat = CadiBack::doit(cnf, conf.verbosity, ret);
+//    int sat = 0;
+//    assert(false); //cadiback is not compiled in!
+//    if (sat) {
+//        vector<Lit> tmp;
+//        for(const auto& l: ret) {
+//            if (l == 0) continue;
+//            const Lit lit = Lit(abs(l)-1, l < 0);
+//            if (value(lit.var()) != l_Undef) continue;
+//            if (varData[lit.var()].removed != Removed::none) continue;
+//            tmp.clear();
+//            tmp.push_back(lit);
+//            add_clause_int(tmp);
+//        }
+//        finished = true;
+//    }
+//    return sat != 20;
+//}
 
 void Solver::detach_and_free_all_irred_cls()
 {
