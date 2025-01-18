@@ -262,6 +262,7 @@ public:
     vector<EGaussian*> gmatrices;
     vector<GaussQData> gqueuedata;
 
+    Lit                 failBinLit;       ///< Used to store which watches[lit] we were looking through when conflict occured
 protected:
     friend class DataSync;
     int64_t simpDB_props = 0;
@@ -278,7 +279,6 @@ protected:
     vector<Trail>  trail; ///< Assignment stack; stores all assignments made in the order they were made.
     vector<uint32_t>    trail_lim;        ///< Separator indices for different decision levels in 'trail'.
     uint32_t            qhead;            ///< Head of queue (as index into the trail)
-    Lit                 failBinLit;       ///< Used to store which watches[lit] we were looking through when conflict occured
 
     friend class EGaussian;
 
